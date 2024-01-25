@@ -74,6 +74,83 @@ public class Manager {
         return result;
     }
 
+    public static Llibre addLlibre(String lname, String editorial){
+        Session session = factory.openSession();
+        Transaction tx = null;
+        Llibre result = null;
+        try {
+            tx = session.beginTransaction();
+            result = new Llibre(lname, editorial);
+            session.save(result); 
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace(); 
+            result = null;
+        } finally {
+            session.close(); 
+        }
+        return result;
+    }
+
+    public static Biblioteca addBiblioteca(String lname, String ciutat){
+        Session session = factory.openSession();
+        Transaction tx = null;
+        Biblioteca result = null;
+        try {
+            tx = session.beginTransaction();
+            result = new Biblioteca(lname, ciutat);
+            session.save(result); 
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace(); 
+            result = null;
+        } finally {
+            session.close(); 
+        }
+        return result;
+    }
+
+    public static Persona addPersona(String dni, String lname, String telefon){
+        Session session = factory.openSession();
+        Transaction tx = null;
+        Persona result = null;
+        try {
+            tx = session.beginTransaction();
+            result = new Persona(dni, lname, telefon);
+            session.save(result); 
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace(); 
+            result = null;
+        } finally {
+            session.close(); 
+        }
+        return result;
+    }
+
+    public static Autor addAutor(String lname){
+        Session session = factory.openSession();
+        Transaction tx = null;
+        Autor result = null;
+        try {
+            tx = session.beginTransaction();
+            result = new Autor(lname);
+            session.save(result); 
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace(); 
+            result = null;
+        } finally {
+            session.close(); 
+        }
+        return result;
+    }
+    
+
     public static <T> T getById(Class<? extends T> clazz, long id){
         Session session = factory.openSession();
         Transaction tx = null;
@@ -119,6 +196,63 @@ public class Manager {
             obj.setFirstName(firstName);
             obj.setLastName(lastName);
             obj.setSalary(salary);
+            session.update(obj); 
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace(); 
+        } finally {
+            session.close(); 
+        }
+    }
+
+    public static void updateBiblioteca(long id, String name, String ciutat, Set<Llibre> llibres){
+        Session session = factory.openSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            Biblioteca obj = (Biblioteca) session.get(Biblioteca.class, id); 
+            obj.setNom(name);
+            obj.setCiutat(ciutat);
+            obj.setLlibres(llibres);
+            session.update(obj); 
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace(); 
+        } finally {
+            session.close(); 
+        }
+    }
+
+    public static void updatePersona(long id, String dni, String name, String telefon, Set<Llibre> llibres){
+        Session session = factory.openSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            Persona obj = (Persona) session.get(Persona.class, id); 
+            obj.setDni(dni);
+            obj.setNom(name);
+            obj.setTelefon(telefon);
+            obj.setLlibres(llibres);
+            session.update(obj); 
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace(); 
+        } finally {
+            session.close(); 
+        }
+    }
+
+    public static void updateAutor(long id, String name, Set<Llibre> llibres){
+        Session session = factory.openSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            Autor obj = (Autor) session.get(Autor.class, id); 
+            obj.setNom(name);
+            obj.setLlibres(llibres);
             session.update(obj); 
             tx.commit();
         } catch (HibernateException e) {

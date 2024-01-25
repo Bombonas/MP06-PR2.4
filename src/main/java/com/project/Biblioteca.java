@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import antlr.collections.impl.LList;
+
 
 @Entity
 @Table(name = "Biblioteca", 
@@ -27,9 +29,14 @@ public class Biblioteca implements Serializable{
     @JoinTable(name = "Llibre_Biblioteca",
         joinColumns = {@JoinColumn(referencedColumnName = "id")},
         inverseJoinColumns = {@JoinColumn(referencedColumnName = "id")})
-    private Set<Biblioteca> llibres;
+    private Set<Llibre> llibres;
 
-    public Biblioteca() { }
+    public Biblioteca(){}
+
+    public Biblioteca(String nom, String ciutat) { 
+        this.nom = nom;
+        this.ciutat = ciutat;
+    }
 
     public long getBibliotecaId() {
         return bibliotecaId;
@@ -55,24 +62,24 @@ public class Biblioteca implements Serializable{
         this.ciutat = ciutat;
     }
 
-    public Set<Biblioteca> getLlibres() {
+    public Set<Llibre> getLlibres() {
         return llibres;
     }
 
-    public void setLlibres(Set<Biblioteca> llibres) {
+    public void setLlibres(Set<Llibre> llibres) {
         this.llibres = llibres;
     }
 
-    public List<Object[]> queryBibliotecas() {
+    public List<Object[]> queryLlibres() {
         long id = this.getBibliotecaId();
-        return Manager.queryTable("SELECT DISTINCT b.* FROM Llibre_Biblioteca lb, Biblioteca b WHERE b.id = lb.biblioteca_id AND lb.llibres_id = " + id);
+        return Manager.queryTable("SELECT DISTINCT l.* FROM Llibre_Biblioteca lb, Llibre l WHERE l.id = lb.llibres_id AND lb.biblioteques_id = " + id);
     }
 
     @Override
     public String toString() {
-        String str = Manager.tableToString(queryBibliotecas()).
+        String str = Manager.tableToString(queryLlibres()).
         replaceAll("\n", " | ");
 
-        return this.getBibliotecaId() + ": " + this.getNom() + ", " + this.getCiutat() + ", Llibres relacionados: [" + str + "]";
+        return this.getBibliotecaId() + ": " + this.getNom() + ", " + this.getCiutat() + ", Llibres: [" + str + "]";
     }
 }

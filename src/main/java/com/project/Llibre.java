@@ -1,8 +1,8 @@
 package com.project;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.persistence.*;
 
@@ -21,15 +21,22 @@ public class Llibre implements Serializable{
 	@Column(name = "editorial")
 	private String editorial;
 
-    @OneToMany
-    @JoinColumn(name = "autorId", insertable = false, updatable = false)
-    private long autorId;
+    @ManyToOne
+    @JoinColumn(name = "autorId")
+    private Autor autor;
 
     @ManyToMany(mappedBy = "llibres")
     private Set<Biblioteca> biblioteques;
 
     @ManyToMany(mappedBy = "llibres")
-    private Set<Biblioteca> persones;
+    private Set<Persona> persones;
+
+    Llibre(){}
+
+    Llibre(String name, String editorial){
+        this.nom = name;
+        this.editorial = editorial;
+    }
 
     public long getLlibreId() {
         return llibreId;
@@ -55,8 +62,8 @@ public class Llibre implements Serializable{
         this.editorial = editorial;
     }
 
-    public long getAutorId() {
-        return autorId;
+    public Autor getAutorId() {
+        return autor;
     }
 
     public Set<Biblioteca> getBiblioteques() {
@@ -75,16 +82,8 @@ public class Llibre implements Serializable{
         this.persones = persones;
     }
 
-    public List<Biblioteca> queryBibliotecas() {
-        long id = this.getLlibreId();
-        return Manager.queryTable("SELECT DISTINCT b.* FROM Llibre_Biblioteca lb, Biblioteca b WHERE b.id = lb.biblioteca_id AND lb.llibres_id = " + id);
-    }
-
     @Override
     public String toString() {
-        List<Biblioteca> bibliotecas = queryBibliotecas();
-        String bibliotecasString = bibliotecas.stream().map(b -> b.getNom()).collect(Collectors.joining(", "));
-
-        return this.getLlibreId() + ": " + this.getNom() + ", Editorial: " + this.getEditorial() + ", Bibliotecas relacionadas: [" + bibliotecasString + "]";
+        return this.getLlibreId() + ": " + this.getNom() + ", Editorial: " + this.getEditorial();
     }
 }
